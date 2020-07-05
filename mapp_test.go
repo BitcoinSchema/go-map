@@ -6,17 +6,13 @@ import (
 	"github.com/rohenaz/go-bob"
 )
 
-func TestFromTape(t *testing.T) {
-	tape := bob.Tape{
-		Cell: []bob.Cell{
-			{S: "testing"},
-		},
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
 	}
-	m := &MAP{}
-	m.FromTape(tape)
-	if m == nil {
-		t.Error("MAP was nil")
-	}
+	return false
 }
 
 func TestAdd(t *testing.T) {
@@ -32,9 +28,18 @@ func TestAdd(t *testing.T) {
 	m := MAP{}
 	m.FromTape(tape)
 	// expectedResult := []string{"something", "something else"}
-	if m["keyName"] == nil {
+
+	switch m["keyName"].(type) {
+	case []string:
+		if !contains(m["keyName"].([]string), "something") || !contains(m["keyName"].([]string), "something else") {
+			t.Errorf("ADD Failed %s", m["keyName1"])
+		}
+		break
+	case interface{}:
 		t.Errorf("ADD Failed %s", m["keyName1"])
+		break
 	}
+
 }
 
 func TestSet(t *testing.T) {
