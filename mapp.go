@@ -2,6 +2,7 @@ package mapp
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/rohenaz/go-bob"
 )
@@ -9,8 +10,8 @@ import (
 // MAP is Magic Attribute Protocol
 type MAP map[string]interface{} // `json:"MAP,omitempty" bson:"MAP, omitempty"`
 
-// MapPrefix is the Bitcom prefix for Magic Attribute Protocol
-const MapPrefix = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5"
+// Prefix is the Bitcom prefix for Magic Attribute Protocol
+const Prefix = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5"
 
 // MAP Commands
 const (
@@ -31,8 +32,10 @@ func New() *MAP {
 
 // MAP SET
 func (m MAP) set(cells []bob.Cell) {
+	log.Printf("Setting %+v", cells)
+
 	for idx, cell := range cells {
-		// Skip prefix and command
+		// Skip prefix (0) and command (1)
 		if idx < 2 {
 			continue
 		}
@@ -45,18 +48,16 @@ func (m MAP) set(cells []bob.Cell) {
 
 // MAP ADD
 func (m MAP) add(cells []bob.Cell) {
+	var keyValues []string
+	keyName := cells[2].S
 	for idx, cell := range cells {
-		if idx < 2 {
+		// Skip prefix (0) and command (1) and keyName (2)
+		if idx < 3 {
 			continue
 		}
-		var keyName string
-		if idx == 4 {
-			keyName = cell.S
-			continue
-		}
-
-		m[keyName] = cell.S
+		keyValues = append(keyValues, cell.S)
 	}
+	m[keyName] = keyValues
 }
 
 func (m MAP) remove(cell []bob.Cell) {
@@ -71,8 +72,14 @@ func (m MAP) delete(cell []bob.Cell) {
 
 // FromTape sets a MAP object from a BOB Tape
 func (m MAP) FromTape(tape bob.Tape) error {
-	if tape.Cell[0].S != MapPrefix {
+
+	if len(tape.Cell) < 3 {
+		return fmt.Errorf("Invalid MAP record. Missing require parameters %d", len(tape.Cell))
+	}
+
+	if tape.Cell[0].S == Prefix {
 		m[CMD] = tape.Cell[1].S
+
 		switch m[CMD] {
 		case DELETE:
 			fallthrough
@@ -89,9 +96,9 @@ func (m MAP) FromTape(tape bob.Tape) error {
 			m[TXID] = tape.Cell[2].S
 			m[SELECT_CMD] = tape.Cell[3].S
 
-			// Build the command from SELECT
+			// Build new command from SELECT
 			newCells := []bob.Cell{}
-			newCells[0] = bob.Cell{S: MapPrefix}
+			newCells[0] = bob.Cell{S: Prefix}
 			newCells[1] = bob.Cell{S: SELECT_CMD}
 			for idx, cell := range tape.Cell {
 				if idx < 4 {
