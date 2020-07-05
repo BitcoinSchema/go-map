@@ -2,7 +2,6 @@ package mapp
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/rohenaz/go-bob"
 )
@@ -32,8 +31,6 @@ func New() *MAP {
 
 // MAP SET
 func (m MAP) set(cells []bob.Cell) {
-	log.Printf("Setting %+v", cells)
-
 	for idx, cell := range cells {
 		// Skip prefix (0) and command (1)
 		if idx < 2 {
@@ -51,7 +48,7 @@ func (m MAP) add(cells []bob.Cell) {
 	var keyValues []string
 	keyName := cells[2].S
 	for idx, cell := range cells {
-		// Skip prefix (0) and command (1) and keyName (2)
+		// Skip prefix (0), command (1) and keyName (2)
 		if idx < 3 {
 			continue
 		}
@@ -60,14 +57,15 @@ func (m MAP) add(cells []bob.Cell) {
 	m[keyName] = keyValues
 }
 
-func (m MAP) remove(cell []bob.Cell) {
-	// Since set is inverse of remove we can build with the same function
-	m.set(cell)
+func (m MAP) remove(cells []bob.Cell) {
+	// Skip prefix (0) and command (1)
+	m["key"] = cells[2].S
 }
 
-func (m MAP) delete(cell []bob.Cell) {
-	// Since add is inverse of delete we can build with the same function
-	m.add(cell)
+func (m MAP) delete(cells []bob.Cell) {
+	// Skip prefix (0) and command (1)
+	m["key"] = cells[2].S
+	m["value"] = cells[3].S
 }
 
 // FromTape sets a MAP object from a BOB Tape
@@ -82,13 +80,17 @@ func (m MAP) FromTape(tape bob.Tape) error {
 
 		switch m[CMD] {
 		case DELETE:
-			fallthrough
+			m.delete(tape.Cell)
+			break
 		case ADD:
 			m.add(tape.Cell)
+			break
 		case REMOVE:
-			fallthrough
+			m.remove(tape.Cell)
+			break
 		case SET:
 			m.set(tape.Cell)
+			break
 		case SELECT:
 			if len(tape.Cell) < 5 {
 				return fmt.Errorf("Missing required parameters in MAP SELECT statement. Cell length: %d", len(tape.Cell))
