@@ -111,4 +111,5 @@ func (m MAP) FromTape(tape bob.Tape) error {
 			}
 		}
 	}
+	return nil
 }
