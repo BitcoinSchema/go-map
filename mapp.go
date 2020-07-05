@@ -81,16 +81,12 @@ func (m MAP) FromTape(tape bob.Tape) error {
 		switch m[CMD] {
 		case DELETE:
 			m.delete(tape.Cell)
-			break
 		case ADD:
 			m.add(tape.Cell)
-			break
 		case REMOVE:
 			m.remove(tape.Cell)
-			break
 		case SET:
 			m.set(tape.Cell)
-			break
 		case SELECT:
 			if len(tape.Cell) < 5 {
 				return fmt.Errorf("Missing required parameters in MAP SELECT statement. Cell length: %d", len(tape.Cell))
