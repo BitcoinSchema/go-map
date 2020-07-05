@@ -15,6 +15,24 @@ func contains(arr []string, str string) bool {
 	return false
 }
 
+func TestSelectDelete(t *testing.T) {
+	tape := bob.Tape{
+		Cell: []bob.Cell{
+			{S: Prefix},
+			{S: SELECT},
+			{S: "a9a4387d2baa2edcc53ec040b3affbc38778e9dd876f9a47e5c767c785aacf76"},
+			{S: DELETE},
+			{S: "keyName1"},
+			{S: "something"},
+		},
+	}
+	m := MAP{}
+	m.FromTape(tape)
+	if m[CMD] != SELECT || m["key"] != "keyName1" || m["value"] != "something" {
+		t.Errorf("SELECT + DELETE Failed %s %+v", m[CMD], m)
+	}
+}
+
 func TestAdd(t *testing.T) {
 	tape := bob.Tape{
 		Cell: []bob.Cell{
@@ -52,15 +70,10 @@ func TestDelete(t *testing.T) {
 	m := MAP{}
 	m.FromTape(tape)
 
-	switch m["keyName"].(type) {
-	case []string:
-		if !contains(m["keyName"].([]string), "something") {
-			t.Errorf("DELETE Failed %s", m["keyName1"])
-		}
-		break
-	default:
-		t.Errorf("DELETE Failed %s", m["keyName1"])
+	if m["key"] != "keyName" || m["value"] != "something" {
+		t.Errorf("DELETE Failed %s %s", m["key"], m["value"])
 	}
+
 }
 
 func TestSet(t *testing.T) {

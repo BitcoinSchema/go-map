@@ -91,19 +91,15 @@ func (m MAP) FromTape(tape bob.Tape) error {
 			if len(tape.Cell) < 5 {
 				return fmt.Errorf("Missing required parameters in MAP SELECT statement. Cell length: %d", len(tape.Cell))
 			}
+			if len(tape.Cell[2].S) != 64 {
+				return fmt.Errorf("MAP syntax error. Invalid Txid in SELECT command: %d", len(tape.Cell))
+			}
 			m[TXID] = tape.Cell[2].S
 			m[SELECT_CMD] = tape.Cell[3].S
 
 			// Build new command from SELECT
-			newCells := []bob.Cell{}
-			newCells[0] = bob.Cell{S: Prefix}
-			newCells[1] = bob.Cell{S: SELECT_CMD}
-			for idx, cell := range tape.Cell {
-				if idx < 4 {
-					continue
-				}
-				newCells[idx-2] = cell
-			}
+			newCells := []bob.Cell{{S: Prefix}, {S: tape.Cell[3].S}}
+			newCells = append(newCells, tape.Cell[4:]...)
 			switch m[SELECT_CMD] {
 			case ADD:
 				m.add(newCells)
