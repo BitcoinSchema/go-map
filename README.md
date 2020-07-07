@@ -24,5 +24,5 @@ A library for working with [Magic Attribute Protocol](https://github.com/rohenaz
     }
 
 
-    log.Printf("MAP TYPE is %s", MAP["type"])
+    log.Printf("MAP TYPE is %s", mapData["type"])
 ```
