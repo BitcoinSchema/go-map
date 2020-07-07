@@ -17,7 +17,12 @@ A library for working with [Magic Attribute Protocol](https://github.com/rohenaz
     }
 
     mapData := mapp.New()
-    mapData.FromTape(tape)
+    for _, out := range bobData.Out {
+      for _, tape := range out.Tape {
+        mapData.FromTape(tape)
+      }
+    }
+
 
     log.Printf("MAP TYPE is %s", MAP.type)
 ```
