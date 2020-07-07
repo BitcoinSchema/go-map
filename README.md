@@ -16,13 +16,13 @@ A library for working with [Magic Attribute Protocol](https://github.com/rohenaz
       return
     }
 
-    mapData := mapp.New()
     for _, out := range bobData.Out {
       for _, tape := range out.Tape {
+        mapData := mapp.New()
         mapData.FromTape(tape)
+        log.Printf("MAP TYPE is %s", mapData["type"])
       }
     }
 
 
-    log.Printf("MAP TYPE is %s", mapData["type"])
 ```
