@@ -108,3 +108,23 @@ func TestRemove(t *testing.T) {
 		t.Errorf("REMOVE Failed %s", m["key"])
 	}
 }
+
+func TestNewFromTape(t *testing.T) {
+	tape := bob.Tape{
+		Cell: []bob.Cell{
+			{S: Prefix},
+			{S: Set},
+			{S: "app"},
+			{S: "myapp"},
+		},
+	}
+
+	tx, err := NewFromTape(&tape)
+	if err != nil {
+		t.Errorf("Failed to create new magic from tape")
+	}
+
+	if tx.getValue("app") != "myApp" {
+		t.Errorf("Unexpected output %+v %s", tx, tx.getValue("app"))
+	}
+}

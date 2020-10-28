@@ -38,8 +38,25 @@ func (m MAP) set(cells []bob.Cell) {
 	}
 }
 
+func (m MAP) setValue(key string, val string) {
+	m[key] = val
+	return
+}
+
+func (m MAP) setValues(key string, val []string) {
+	m[key] = val
+	return
+}
+
+// value getter
+func (m *MAP) getValue(key string) (val string) {
+	bigM := *m
+	iface := bigM[key]
+	return fmt.Sprintf("%s", iface)
+}
+
 // MAP ADD
-func (m MAP) add(cells []bob.Cell) {
+func (m *MAP) add(cells []bob.Cell) {
 	var keyValues []string
 	keyName := cells[2].S
 	for idx, cell := range cells {
@@ -49,18 +66,18 @@ func (m MAP) add(cells []bob.Cell) {
 		}
 		keyValues = append(keyValues, cell.S)
 	}
-	m[keyName] = keyValues
+	m.setValues(keyName, keyValues)
 }
 
-func (m MAP) remove(cells []bob.Cell) {
+func (m *MAP) remove(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m["key"] = cells[2].S
+	m.setValue("key", cells[2].S)
 }
 
-func (m MAP) delete(cells []bob.Cell) {
+func (m *MAP) delete(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m["key"] = cells[2].S
-	m["value"] = cells[3].S
+	m.setValue("key", cells[2].S)
+	m.setValue("value", cells[3].S)
 }
 
 // NewFromTape takes a tape and returns a new MAP
@@ -71,16 +88,16 @@ func NewFromTape(tape *bob.Tape) (magicTx *MAP, err error) {
 }
 
 // FromTape sets a MAP object from a BOB Tape
-func (m MAP) FromTape(tape *bob.Tape) error {
+func (m *MAP) FromTape(tape *bob.Tape) error {
 
 	if len(tape.Cell) < 3 {
 		return fmt.Errorf("Invalid MAP record. Missing require parameters %d", len(tape.Cell))
 	}
 
 	if tape.Cell[0].S == Prefix {
-		m[Cmd] = tape.Cell[1].S
+		m.setValue(Cmd, tape.Cell[1].S)
 
-		switch m[Cmd] {
+		switch m.getValue(Cmd) {
 		case Delete:
 			m.delete(tape.Cell)
 		case Add:
@@ -96,13 +113,13 @@ func (m MAP) FromTape(tape *bob.Tape) error {
 			if len(tape.Cell[2].S) != 64 {
 				return fmt.Errorf("MAP syntax error. Invalid Txid in SELECT command: %d", len(tape.Cell))
 			}
-			m[TxID] = tape.Cell[2].S
-			m[SelectCmd] = tape.Cell[3].S
+			m.setValue(TxID, tape.Cell[2].S)
+			m.setValue(SelectCmd, tape.Cell[3].S)
 
 			// Build new command from SELECT
 			newCells := []bob.Cell{{S: Prefix}, {S: tape.Cell[3].S}}
 			newCells = append(newCells, tape.Cell[4:]...)
-			switch m[SelectCmd] {
+			switch SelectCmd {
 			case Add:
 				m.add(newCells)
 			case Delete:
