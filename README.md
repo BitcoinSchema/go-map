@@ -5,8 +5,8 @@ A library for working with [Magic Attribute Protocol](https://github.com/rohenaz
 ## Usage
 
 ```go
-    import "github.com/rohenaz/go-bob"
-    import "github.com/rohenaz/go-map"
+    import "github.com/bitcoinschema/go-bob"
+    import "github.com/bitcoinschema/go-map"
 
     line := "<BOB formatted json string>"
 
