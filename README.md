@@ -6,20 +6,19 @@ A library for working with [Magic Attribute Protocol](https://github.com/rohenaz
 
 ```go
     import "github.com/rohenaz/go-bob"
-    mapp import "github.com/rohenaz/go-map"
+    import "github.com/rohenaz/go-map"
 
     line := "<BOB formatted json string>"
 
-    bobData := bob.New()
-    if err := json.Unmarshal(line, &bobData); err != nil {
+    bobData := &bob.Tx{}
+    if err := json.Unmarshal(line, bobData); err != nil {
       fmt.Println("Error:", err)
       return
     }
 
     for _, out := range bobData.Out {
       for _, tape := range out.Tape {
-        mapData := mapp.New()
-        mapData.FromTape(tape)
+        mapData, err := magic.NewFromTape(tape)
         log.Printf("MAP TYPE is %s", mapData["type"])
       }
     }

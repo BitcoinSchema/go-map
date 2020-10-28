@@ -1,5 +1,5 @@
-module github.com/rohenaz/go-map
+module github.com/bitcoinschema/go-map
 
-go 1.14
+go 1.15
 
-require github.com/rohenaz/go-bob v0.0.0-20200704190822-4b02dd80ee80
+require github.com/bitcoinschema/go-bob v0.0.5
