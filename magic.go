@@ -34,21 +34,9 @@ func (m MAP) set(cells []bob.Cell) {
 		}
 
 		if idx%2 == 1 {
-			m.setValue(cells[idx-1].S, cell.S)
+			m[cells[idx-1].S] = cell.S
 		}
 	}
-}
-
-func (m MAP) setValue(key string, val string) {
-	log.Printf("Setting value %s instead of %s in %+v", val, m[key], m)
-	m[key] = val
-	return
-}
-
-func (m MAP) setValues(key string, val []string) {
-	log.Println("Setting values", val)
-	m[key] = val
-	return
 }
 
 // value getter
@@ -67,23 +55,25 @@ func (m MAP) add(cells []bob.Cell) {
 		}
 		keyValues = append(keyValues, cell.S)
 	}
-	m.setValues(keyName, keyValues)
+	m[keyName] = keyValues
 }
 
 func (m MAP) remove(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m.setValue("key", cells[2].S)
+	m["key"] = cells[2].S
 }
 
 func (m MAP) delete(cells []bob.Cell) {
+	log.Printf("Deleting %s %s\n", cells[2].S, cells[3].S)
 	// Skip prefix (0) and command (1)
-	m.setValue("key", cells[2].S)
-	m.setValue("value", cells[3].S)
+	m["key"] = cells[2].S
+	m["value"] = cells[3].S
+	log.Println("Values set", m["key"])
 }
 
 // NewFromTape takes a tape and returns a new MAP
-func NewFromTape(tape *bob.Tape) (magicTx *MAP, err error) {
-	magicTx = new(MAP)
+func NewFromTape(tape *bob.Tape) (magicTx MAP, err error) {
+	magicTx = make(MAP)
 	err = magicTx.FromTape(tape)
 	return
 }
@@ -96,9 +86,9 @@ func (m MAP) FromTape(tape *bob.Tape) error {
 	}
 
 	if tape.Cell[0].S == Prefix {
-		m.setValue(Cmd, tape.Cell[1].S)
+		m[Cmd] = tape.Cell[1].S
 
-		switch m.getValue(Cmd) {
+		switch m[Cmd] {
 		case Delete:
 			m.delete(tape.Cell)
 		case Add:
@@ -114,13 +104,13 @@ func (m MAP) FromTape(tape *bob.Tape) error {
 			if len(tape.Cell[2].S) != 64 {
 				return fmt.Errorf("MAP syntax error. Invalid Txid in SELECT command: %d", len(tape.Cell))
 			}
-			m.setValue(TxID, tape.Cell[2].S)
-			m.setValue(SelectCmd, tape.Cell[3].S)
+			m[TxID] = tape.Cell[2].S
+			m[SelectCmd] = tape.Cell[3].S
 
 			// Build new command from SELECT
 			newCells := []bob.Cell{{S: Prefix}, {S: tape.Cell[3].S}}
 			newCells = append(newCells, tape.Cell[4:]...)
-			switch SelectCmd {
+			switch m[SelectCmd] {
 			case Add:
 				m.add(newCells)
 			case Delete:

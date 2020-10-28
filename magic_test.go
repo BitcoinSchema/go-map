@@ -31,8 +31,9 @@ func TestSelectDelete(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to create magicTx from tape %s", err)
 	}
-	if m.getValue(Cmd) != Select || m.getValue("key") != "keyName1" || m.getValue("value") != "something" {
-		t.Errorf("SELECT + DELETE Failed %s %+v", m.getValue(Cmd), m)
+
+	if m[Cmd] != Select || m["key"] != "keyName1" || m["value"] != "something" {
+		t.Errorf("SELECT + DELETE Failed. command: %s, key: %+s, value: %s", m[Cmd], m["key"], m["value"])
 	}
 }
 
@@ -127,7 +128,7 @@ func TestNewFromTape(t *testing.T) {
 		t.Errorf("Failed to create new magic from tape")
 	}
 
-	if tx.getValue("app") != "myApp" {
-		t.Errorf("Unexpected output %+v %s", tx, tx.getValue("app"))
+	if tx["app"] != "myapp" {
+		t.Errorf("Unexpected output %+v %s", tx, tx["app"])
 	}
 }
