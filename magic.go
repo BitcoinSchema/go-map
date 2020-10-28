@@ -2,6 +2,7 @@ package magic
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bitcoinschema/go-bob"
 )
@@ -38,13 +39,14 @@ func (m MAP) set(cells []bob.Cell) {
 	}
 }
 
-func (m MAP) setValue(key string, val string) {
-	m[key] = val
+func (m *MAP) setValue(key string, val string) {
+	(*m)[key] = &val
 	return
 }
 
-func (m MAP) setValues(key string, val []string) {
-	m[key] = val
+func (m *MAP) setValues(key string, val []string) {
+	log.Println("Setting values", val)
+	(*m)[key] = &val
 	return
 }
 

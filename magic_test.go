@@ -16,7 +16,7 @@ func contains(arr []string, str string) bool {
 }
 
 func TestSelectDelete(t *testing.T) {
-	tape := bob.Tape{
+	tape := &bob.Tape{
 		Cell: []bob.Cell{
 			{S: Prefix},
 			{S: Select},
@@ -26,10 +26,13 @@ func TestSelectDelete(t *testing.T) {
 			{S: "something"},
 		},
 	}
-	m := MAP{}
-	m.FromTape(&tape)
-	if m[Cmd] != Select || m["key"] != "keyName1" || m["value"] != "something" {
-		t.Errorf("SELECT + DELETE Failed %s %+v", m[Cmd], m)
+
+	m, err := NewFromTape(tape)
+	if err != nil {
+		t.Errorf("Failed to create magicTx from tape %s", err)
+	}
+	if m.getValue(Cmd) != Select || m.getValue("key") != "keyName1" || m.getValue("value") != "something" {
+		t.Errorf("SELECT + DELETE Failed %s %+v", m.getValue(Cmd), m)
 	}
 }
 
