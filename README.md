@@ -1,6 +1,6 @@
 # go-map
 
-A library for working with [Magic Attribute Protocol](https://github.com/rohenaz/MAP). Used in conjunction with a Tape from [go-bob](https://github.com/rohenaz/go-bob)
+A library for working with [Magic Attribute Protocol](https://github.com/rohenaz/MAP). Used in conjunction with a Tape from [go-bob](https://github.com/bitcoinschema/go-bob)
 
 ## Usage
 
