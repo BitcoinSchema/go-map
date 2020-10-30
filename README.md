@@ -135,28 +135,6 @@ Read more about this Go project's [code standards](CODE_STANDARDS.md).
 ## Usage
 Checkout all the [examples](examples)!
 
-```go
-    import "github.com/bitcoinschema/go-bob"
-    import "github.com/bitcoinschema/go-map"
-
-    line := "<BOB formatted json string>"
-
-    bobData := &bob.Tx{}
-    if err := json.Unmarshal(line, bobData); err != nil {
-      fmt.Println("Error:", err)
-      return
-    }
-
-    for _, out := range bobData.Out {
-      for _, tape := range out.Tape {
-        mapData, err := magic.NewFromTape(tape)
-        log.Printf("MAP TYPE is %s", mapData["type"])
-      }
-    }
-
-
-```
-
 <br/>
 
 ## Maintainers
