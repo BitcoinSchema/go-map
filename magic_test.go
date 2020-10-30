@@ -6,6 +6,11 @@ import (
 	"github.com/bitcoinschema/go-bob"
 )
 
+const mapKey = "key"
+const mapValue = "value"
+const mapTestKey = "keyName1"
+const mapTestValue = "something"
+
 func contains(arr []string, str string) bool {
 	for _, a := range arr {
 		if a == str {
@@ -22,18 +27,18 @@ func TestSelectDelete(t *testing.T) {
 			{S: Select},
 			{S: "a9a4387d2baa2edcc53ec040b3affbc38778e9dd876f9a47e5c767c785aacf76"},
 			{S: Delete},
-			{S: "keyName1"},
-			{S: "something"},
+			{S: mapTestKey},
+			{S: mapTestValue},
 		},
 	}
 
 	m, err := NewFromTape(tape)
 	if err != nil {
-		t.Errorf("Failed to create magicTx from tape %s", err)
+		t.Fatalf("Failed to create magicTx from tape %s", err)
 	}
 
-	if m[Cmd] != Select || m["key"] != "keyName1" || m["value"] != "something" {
-		t.Errorf("SELECT + DELETE Failed. command: %s, key: %+s, value: %s", m[Cmd], m["key"], m["value"])
+	if m[Cmd] != Select || m[mapKey] != mapTestKey || m[mapValue] != mapTestValue {
+		t.Fatalf("SELECT + DELETE Failed. command: %s, key: %s, value: %s", m[Cmd], m[mapKey], m[mapValue])
 	}
 }
 
@@ -43,22 +48,65 @@ func TestAdd(t *testing.T) {
 			{S: Prefix},
 			{S: Add},
 			{S: "keyName"},
-			{S: "something"},
+			{S: mapTestValue},
 			{S: "something else"},
 		},
 	}
-	m := MAP{}
-	m.FromTape(&tape)
+	m, err := NewFromTape(&tape)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
 
 	switch m["keyName"].(type) {
 	case []string:
-		if !contains(m["keyName"].([]string), "something") ||
+		if !contains(m["keyName"].([]string), mapTestValue) ||
 			!contains(m["keyName"].([]string), "something else") {
-			t.Errorf("ADD Failed %s", m["keyName1"])
+			t.Fatalf("ADD Failed %s", m["keyName1"])
 		}
-		break
 	default:
-		t.Errorf("ADD Failed %s", m["keyName1"])
+		t.Fatalf("ADD Failed %s", m[mapTestKey])
+	}
+}
+
+func TestGetValue(t *testing.T) {
+	tape := bob.Tape{
+		Cell: []bob.Cell{
+			{S: Prefix},
+			{S: Add},
+			{S: "keyName"},
+			{S: mapTestValue},
+		},
+	}
+	m, err := NewFromTape(&tape)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
+
+	if val := m.getValue("keyName"); val != "something" {
+		t.Fatalf("expected: [%v] but got: [%v]", "something", val)
+	}
+}
+
+func TestGetValues(t *testing.T) {
+	tape := bob.Tape{
+		Cell: []bob.Cell{
+			{S: Prefix},
+			{S: Add},
+			{S: "keyName"},
+			{S: mapTestValue},
+			{S: "another value"},
+			{S: "third value"},
+		},
+	}
+	m, err := NewFromTape(&tape)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
+
+	if val := m.getValues("keyName"); val[0] != "something" {
+		t.Fatalf("expected: [%v] but got: [%v]", "something", val)
+	} else if val[1] != "another value" {
+		t.Fatalf("expected: [%v] but got: [%v]", "another value", val)
 	}
 }
 
@@ -68,14 +116,16 @@ func TestDelete(t *testing.T) {
 			{S: Prefix},
 			{S: Delete},
 			{S: "keyName"},
-			{S: "something"},
+			{S: mapTestValue},
 		},
 	}
-	m := MAP{}
-	m.FromTape(&tape)
+	m, err := NewFromTape(&tape)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
 
-	if m["key"] != "keyName" || m["value"] != "something" {
-		t.Errorf("DELETE Failed %s %s", m["key"], m["value"])
+	if m[mapKey] != "keyName" || m[mapValue] != mapTestValue {
+		t.Errorf("DELETE Failed %s %s", m[mapKey], m[mapValue])
 	}
 
 }
@@ -85,16 +135,18 @@ func TestSet(t *testing.T) {
 		Cell: []bob.Cell{
 			{S: Prefix},
 			{S: Set},
-			{S: "keyName1"},
-			{S: "something"},
+			{S: mapTestKey},
+			{S: mapTestValue},
 			{S: "keyName2"},
 			{S: "something else"},
 		},
 	}
-	m := MAP{}
-	m.FromTape(&tape)
-	if m["keyName1"] != "something" {
-		t.Errorf("SET Failed %s", m["keyName1"])
+	m, err := NewFromTape(&tape)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
+	if m[mapTestKey] != mapTestValue {
+		t.Errorf("SET Failed %s", m[mapTestKey])
 	}
 }
 
@@ -106,29 +158,11 @@ func TestRemove(t *testing.T) {
 			{S: "keyName1"},
 		},
 	}
-	m := MAP{}
-	m.FromTape(&tape)
-	if m["key"] != "keyName1" {
-		t.Errorf("REMOVE Failed %s", m["key"])
-	}
-}
-
-func TestNewFromTape(t *testing.T) {
-	tape := bob.Tape{
-		Cell: []bob.Cell{
-			{S: Prefix},
-			{S: Set},
-			{S: "app"},
-			{S: "myapp"},
-		},
-	}
-
-	tx, err := NewFromTape(&tape)
+	m, err := NewFromTape(&tape)
 	if err != nil {
-		t.Errorf("Failed to create new magic from tape")
+		t.Fatalf("error occurred: %s", err.Error())
 	}
-
-	if tx["app"] != "myapp" {
-		t.Errorf("Unexpected output %+v %s", tx, tx["app"])
+	if m[mapKey] != "keyName1" {
+		t.Errorf("REMOVE Failed %s", m[mapKey])
 	}
 }

@@ -1,8 +1,17 @@
+// Package magic is a library for working with Magic Attribute Protocol and used in conjunction with a Tape
+// from BOB transaction
+//
+// Protocol: https://github.com/rohenaz/MAP
+// BOB: https://bob.planaria.network/
+//
+// If you have any suggestions or comments, please feel free to open an issue on
+// this GitHub repository!
+//
+// By BitcoinSchema Organization (https://bitcoinschema.org)
 package magic
 
 import (
-	"fmt"
-	"log"
+	"strings"
 
 	"github.com/bitcoinschema/go-bob"
 )
@@ -25,7 +34,13 @@ const (
 	SelectCmd = "SELECT_CMD"
 )
 
-// MAP SET
+// MAP Keys
+const (
+	MapKey   = "key"
+	MapValue = "value"
+)
+
+// set is: MAP SET
 func (m MAP) set(cells []bob.Cell) {
 	for idx, cell := range cells {
 		// Skip prefix (0) and command (1)
@@ -39,14 +54,22 @@ func (m MAP) set(cells []bob.Cell) {
 	}
 }
 
-// value getter
-func (m MAP) getValue(key string) (val string) {
-	return fmt.Sprintf("%s", m[key])
+// getValues will return all values in a slice of strings
+func (m MAP) getValues(key string) (values []string) {
+	values = m[key].([]string)
+	return
 }
 
-// MAP ADD
+// getValue will return all values in one concatenated string
+func (m MAP) getValue(key string) (value string) {
+	var data = m[key].([]string)
+	value = strings.Join(data, "")
+	return
+}
+
+// set is: MAP SET
 func (m MAP) add(cells []bob.Cell) {
-	var keyValues []string
+	keyValues := make([]string, 0)
 	keyName := cells[2].S
 	for idx, cell := range cells {
 		// Skip prefix (0), command (1) and keyName (2)
@@ -58,69 +81,15 @@ func (m MAP) add(cells []bob.Cell) {
 	m[keyName] = keyValues
 }
 
+// remove is: MAP REMOVE
 func (m MAP) remove(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m["key"] = cells[2].S
+	m[MapKey] = cells[2].S
 }
 
+// delete is: MAP DELETE
 func (m MAP) delete(cells []bob.Cell) {
-	log.Printf("Deleting %s %s\n", cells[2].S, cells[3].S)
 	// Skip prefix (0) and command (1)
-	m["key"] = cells[2].S
-	m["value"] = cells[3].S
-	log.Println("Values set", m["key"])
-}
-
-// NewFromTape takes a tape and returns a new MAP
-func NewFromTape(tape *bob.Tape) (magicTx MAP, err error) {
-	magicTx = make(MAP)
-	err = magicTx.FromTape(tape)
-	return
-}
-
-// FromTape sets a MAP object from a BOB Tape
-func (m MAP) FromTape(tape *bob.Tape) error {
-
-	if len(tape.Cell) < 3 {
-		return fmt.Errorf("Invalid MAP record. Missing require parameters %d", len(tape.Cell))
-	}
-
-	if tape.Cell[0].S == Prefix {
-		m[Cmd] = tape.Cell[1].S
-
-		switch m[Cmd] {
-		case Delete:
-			m.delete(tape.Cell)
-		case Add:
-			m.add(tape.Cell)
-		case Remove:
-			m.remove(tape.Cell)
-		case Set:
-			m.set(tape.Cell)
-		case Select:
-			if len(tape.Cell) < 5 {
-				return fmt.Errorf("Missing required parameters in MAP SELECT statement. Cell length: %d", len(tape.Cell))
-			}
-			if len(tape.Cell[2].S) != 64 {
-				return fmt.Errorf("MAP syntax error. Invalid Txid in SELECT command: %d", len(tape.Cell))
-			}
-			m[TxID] = tape.Cell[2].S
-			m[SelectCmd] = tape.Cell[3].S
-
-			// Build new command from SELECT
-			newCells := []bob.Cell{{S: Prefix}, {S: tape.Cell[3].S}}
-			newCells = append(newCells, tape.Cell[4:]...)
-			switch m[SelectCmd] {
-			case Add:
-				m.add(newCells)
-			case Delete:
-				m.delete(newCells)
-			case Set:
-				m.set(newCells)
-			case Remove:
-				m.remove(newCells)
-			}
-		}
-	}
-	return nil
+	m[MapKey] = cells[2].S
+	m[MapValue] = cells[3].S
 }
