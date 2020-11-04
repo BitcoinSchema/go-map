@@ -36,8 +36,10 @@ const (
 
 // MAP Keys
 const (
-	MapKey   = "key"
-	MapValue = "value"
+	MapKeyKey   = "key"
+	MapValueKey = "value"
+	MapAppKey   = "app"
+	MapTypeKey  = "type"
 )
 
 // set is: MAP SET
@@ -84,12 +86,12 @@ func (m MAP) add(cells []bob.Cell) {
 // remove is: MAP REMOVE
 func (m MAP) remove(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m[MapKey] = cells[2].S
+	m[MapKeyKey] = cells[2].S
 }
 
 // delete is: MAP DELETE
 func (m MAP) delete(cells []bob.Cell) {
 	// Skip prefix (0) and command (1)
-	m[MapKey] = cells[2].S
-	m[MapValue] = cells[3].S
+	m[MapKeyKey] = cells[2].S
+	m[MapValueKey] = cells[3].S
 }
