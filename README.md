@@ -110,7 +110,7 @@ vet                  Run the Go vet application
 
 ## Examples & Tests
 All unit tests and [examples](examples) run via [Github Actions](https://github.com/BitcoinSchema/go-map/actions) and
-uses [Go version 1.15.x](https://golang.org/doc/go1.15). View the [configuration file](.github/workflows/run-tests.yml).
+uses [Go version 1.16.x](https://golang.org/doc/go1.16). View the [configuration file](.github/workflows/run-tests.yml).
 
 Run all tests (including integration tests)
 ```shell script
@@ -144,8 +144,8 @@ Checkout all the [examples](examples)!
 
 ## Maintainers
 | [<img src="https://github.com/rohenaz.png" height="50" alt="MrZ" />](https://github.com/rohenaz) | [<img src="https://github.com/mrz1836.png" height="50" alt="MrZ" />](https://github.com/mrz1836) |
-|:---:|:---:|
-| [Satchmo](https://github.com/rohenaz) | [MrZ](https://github.com/mrz1836) |
+|:------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|
+|                              [Satchmo](https://github.com/rohenaz)                               |                                [MrZ](https://github.com/mrz1836)                                 |
 
 <br/>
 
@@ -159,8 +159,10 @@ The most basic way to show your support is to star :star2: the project, or to ra
 You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/BitcoinSchema) :clap:
 or by making a [**bitcoin donation**](https://gobitcoinsv.com/#sponsor?utm_source=github&utm_medium=sponsor-link&utm_campaign=go-map&utm_term=go-map&utm_content=go-map) to ensure this journey continues indefinitely! :rocket:
 
+[![Stars](https://img.shields.io/github/stars/BitcoinSchema/go-map?label=Please%20like%20us&style=social)](https://github.com/BitcoinSchema/go-map/stargazers)
+
 <br/>
 
 ## License
 
-![License](https://img.shields.io/github/license/BitcoinSchema/go-map.svg?style=flat&v=3)
+[![License](https://img.shields.io/github/license/BitcoinSchema/go-map.svg?style=flat&v=3)](LICENSE)
