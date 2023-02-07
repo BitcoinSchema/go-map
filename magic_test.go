@@ -9,6 +9,7 @@ import (
 
 var mapKey = "key"
 var mapValue = "value"
+var keyNameStr = "keyName"
 
 var mapTestKey = "keyName1"
 var mapTestValue = "something"
@@ -46,7 +47,6 @@ func TestSelectDelete(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	keyNameStr := "keyName"
 	somethingElse := "something else"
 	tape := bpu.Tape{
 		Cell: []bpu.Cell{
@@ -62,10 +62,10 @@ func TestAdd(t *testing.T) {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
 
-	switch m["keyName"].(type) {
+	switch m[keyNameStr].(type) {
 	case []string:
-		if !contains(m["keyName"].([]string), mapTestValue) ||
-			!contains(m["keyName"].([]string), "something else") {
+		if !contains(m[keyNameStr].([]string), mapTestValue) ||
+			!contains(m[keyNameStr].([]string), "something else") {
 			t.Fatalf("ADD Failed %s", m["keyName1"])
 		}
 	default:
@@ -74,12 +74,12 @@ func TestAdd(t *testing.T) {
 }
 
 func TestGetValue(t *testing.T) {
-	keyName := "keyName"
+
 	tape := bpu.Tape{
 		Cell: []bpu.Cell{
 			{S: &Prefix},
 			{S: &Add},
-			{S: &keyName},
+			{S: &keyNameStr},
 			{S: &mapTestValue},
 		},
 	}
@@ -88,20 +88,20 @@ func TestGetValue(t *testing.T) {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
 
-	if val := m.getValue("keyName"); val != "something" {
+	if val := m.getValue(keyNameStr); val != "something" {
 		t.Fatalf("expected: [%v] but got: [%v]", "something", val)
 	}
 }
 
 func TestGetValues(t *testing.T) {
-	keyName := "keyName"
+
 	anotherValue := "another value"
 	thirdValue := "third value"
 	tape := bpu.Tape{
 		Cell: []bpu.Cell{
 			{S: &Prefix},
 			{S: &Add},
-			{S: &keyName},
+			{S: &keyNameStr},
 			{S: &mapTestValue},
 			{S: &anotherValue},
 			{S: &thirdValue},
@@ -111,7 +111,7 @@ func TestGetValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
-	if val := m.getValues(keyName); len(val) > 0 && val[0] != "something" {
+	if val := m.getValues(keyNameStr); len(val) > 0 && val[0] != "something" {
 		t.Fatalf("expected: [%v] but got: [%v]", "something", val)
 	} else if val[1] != "another value" {
 		t.Fatalf("expected: [%v] but got: [%v]", "another value", val)
@@ -119,12 +119,12 @@ func TestGetValues(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	keyName := "keyName"
+
 	tape := bpu.Tape{
 		Cell: []bpu.Cell{
 			{S: &Prefix},
 			{S: &Delete},
-			{S: &keyName},
+			{S: &keyNameStr},
 			{S: &mapTestValue},
 		},
 	}
