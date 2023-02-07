@@ -3,18 +3,19 @@ package main
 import (
 	"log"
 
-	"github.com/bitcoinschema/go-bob"
+	"github.com/bitcoinschema/go-bpu"
 	magic "github.com/bitcoinschema/go-map"
 )
 
 func main() {
-
-	tape := bob.Tape{
-		Cell: []bob.Cell{
-			{S: magic.Prefix},
-			{S: magic.Set},
-			{S: "app"},
-			{S: "myapp"},
+	appKey := "app"
+	appVal := "myapp"
+	tape := bpu.Tape{
+		Cell: []bpu.Cell{
+			{S: &magic.Prefix},
+			{S: &magic.Set},
+			{S: &appKey},
+			{S: &appVal},
 		},
 	}
 
