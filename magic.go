@@ -103,13 +103,13 @@ func (m MAP) delete(cells []bpu.Cell) {
 }
 
 // select is: MAP SELECT
-func (m MAP) selecter(cells []bpu.Cell) error {
+func (m MAP) selecter(cells []bpu.Cell) {
 
 	if len(cells) < 5 {
-		return fmt.Errorf("missing required parameters in MAP SELECT statement - cell length: %d", len(cells))
+		fmt.Errorf("missing required parameters in MAP SELECT statement - cell length: %d", len(cells))
 	}
 	if cells[2].S == nil || len(*cells[2].S) != 64 {
-		return fmt.Errorf("syntax error - invalid Txid in SELECT command: %d", len(cells))
+		fmt.Errorf("syntax error - invalid Txid in SELECT command: %d", len(cells))
 	}
 	m[TxID] = *cells[2].S
 	m[SelectCmd] = *cells[3].S
@@ -128,5 +128,5 @@ func (m MAP) selecter(cells []bpu.Cell) error {
 	case Remove:
 		m.remove(newCells)
 	}
-	return nil
+
 }
