@@ -52,7 +52,8 @@ func (m MAP) set(cells []bpu.Cell) {
 		}
 
 		if idx%2 == 1 {
-			m[*cells[idx-1].S] = cell.S
+			key := *cells[idx-1].S
+			m[key] = *cell.S
 		}
 	}
 }
@@ -88,7 +89,7 @@ func (m MAP) add(cells []bpu.Cell) {
 // remove is: MAP REMOVE
 func (m MAP) remove(cells []bpu.Cell) {
 	// Skip prefix (0) and command (1)
-	m[MapKeyKey] = cells[2].S
+	m[MapKeyKey] = *cells[2].S
 }
 
 // delete is: MAP DELETE
