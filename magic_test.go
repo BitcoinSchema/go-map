@@ -156,7 +156,7 @@ func TestSet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
-	if m[mapTestKey] != &mapTestValue {
+	if m[mapTestKey] != mapTestValue {
 		t.Errorf("SET Failed %s", m[mapTestKey])
 	}
 }
@@ -174,7 +174,7 @@ func TestRemove(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
-	if m[mapKey] != &keyName1 {
+	if m[mapKey] != keyName1 {
 		t.Errorf("REMOVE Failed %s", m[mapKey])
 	}
 }

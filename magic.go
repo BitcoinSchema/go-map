@@ -96,8 +96,7 @@ func (m MAP) remove(cells []bpu.Cell) {
 func (m MAP) delete(cells []bpu.Cell) {
 	// Skip prefix (0) and command (1)
 	m[MapKeyKey] = *cells[2].S
-	// a MAP command always has 3 cells, that has already been checked, but an invalid delete without the 4th cell
-	// is possible, which would crash the program
+	// a MAP command always has at least 3 cells, but 4th cell is possible
 	if len(cells) > 3 {
 		m[MapValueKey] = *cells[3].S
 	}

@@ -22,7 +22,6 @@ func (m MAP) FromTape(tape *bpu.Tape) error {
 
 	if len(tape.Cell) > 0 && tape.Cell[0].S != nil && *tape.Cell[0].S == Prefix {
 		m[Cmd] = *tape.Cell[1].S
-		fmt.Printf("CELL record %s\n\n", m[Cmd])
 
 		switch m[Cmd] {
 		case Delete:
