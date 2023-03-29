@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/bitcoinschema/go-bob v0.3.4
-	github.com/bitcoinschema/go-bpu v0.0.6
+	github.com/bitcoinschema/go-bpu v0.0.7
 )
 
 require (
