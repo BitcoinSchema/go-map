@@ -3,8 +3,8 @@ module github.com/bitcoinschema/go-map
 go 1.18
 
 require (
-	github.com/bitcoinschema/go-bob v0.4.1
-	github.com/bitcoinschema/go-bpu v0.1.1
+	github.com/bitcoinschema/go-bob v0.4.3
+	github.com/bitcoinschema/go-bpu v0.1.3
 )
 
 require (
