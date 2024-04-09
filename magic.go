@@ -51,7 +51,7 @@ func (m MAP) set(cells []bpu.Cell) {
 			continue
 		}
 
-		if idx%2 == 1 {
+		if idx%2 == 1 && cell.S != nil {
 			key := *cells[idx-1].S
 			m[key] = *cell.S
 		}
