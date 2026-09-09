@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/bsv-blockchain/go-sdk v1.1.27 // indirect
+	github.com/bsv-blockchain/go-sdk v1.2.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
+	golang.org/x/crypto v0.40.0 // indirect
 )
