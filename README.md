@@ -171,3 +171,12 @@ or by making a [**bitcoin donation**](https://gobitcoinsv.com/#sponsor?utm_sourc
 ## License
 
 [![License](https://img.shields.io/github/license/BitcoinSchema/go-map.svg?style=flat&v=3)](LICENSE)
+
+### Binary MAP values
+
+MAP values whose raw pushdata is not valid UTF-8 are preserved as
+`{"b":"<base64>"}` (`magic.BinaryValue` in Go), using the BOB `b` convention.
+Decode `b` to recover the original bytes; do not treat it as display text.
+Valid UTF-8 values keep their existing string representation. MAP commands and
+keys must be text. `ADD` keeps `[]string` for text-only values and uses a mixed
+array when binary values are present.
